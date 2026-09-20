@@ -44,6 +44,15 @@ def test_invalid_mobile_validation():
     )
     assert response.status_code == 422 
 
+def test_update_record():
+    response = client.put(
+        "/properties/AV1001",
+        json={"status": "ACTIVE", "customer_name": "Ravi Updated"}
+    )
+    assert response.status_code == 200
+    assert response.json()["status"] == "ACTIVE"
+    assert response.json()["customer_name"] == "Ravi Updated"
+
 def test_delete_record():
     response = client.delete("/properties/AV1001")
     assert response.status_code == 204

@@ -35,3 +35,8 @@ The automated test suite is written using `pytest` and the FastAPI TestClient. T
 * **Database:** SQLite was chosen to ensure the application is easily runnable locally by another developer without requiring a separate SQL server installation.
 * **Deletion:** A hard delete was implemented for the DELETE endpoint. 
 * **Validation:** Phone numbers are validated purely on length (10-15 characters) using Pydantic's `constr`.
+
+## Final Note
+* **Implemented:** Full CRUD operations (Create, Read, Update, Delete) with SQLite, automated testing via pytest covering edge cases, and input validation using Pydantic.
+* **Not Implemented:** Pagination for the list endpoint and authentication mechanisms, in order to keep the codebase focused strictly on the assignment's core requirements.
+* **Future Improvements:** Given more time, I would implement a soft-delete mechanism (using an `is_deleted` boolean flag), migrate to PostgreSQL for production readiness, and add Docker support for containerized deployment.

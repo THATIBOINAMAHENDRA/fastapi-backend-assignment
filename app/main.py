@@ -22,6 +22,13 @@ class PropertyResponse(PropertyBase):
     class Config:
         orm_mode = True
 
+class PropertyUpdate(BaseModel):
+    customer_name: Optional[str] = None
+    customer_mobile: Optional[constr(min_length=10, max_length=15)] = None
+    property_name: Optional[str] = None
+    property_type: Optional[str] = None
+    status: Optional[str] = None
+
 @app.post("/properties", response_model=PropertyResponse, status_code=status.HTTP_201_CREATED)
 def create_property(prop: PropertyBase, db: Session = Depends(database.get_db)):
     db_prop = db.query(models.PropertyRecord).filter(models.PropertyRecord.id == prop.id).first()
@@ -47,6 +54,20 @@ def list_properties(status: Optional[str] = None, db: Session = Depends(database
     if status:
         query = query.filter(models.PropertyRecord.status == status)
     return query.all()
+
+@app.put("/properties/{id}", response_model=PropertyResponse)
+def update_property(id: str, prop_update: PropertyUpdate, db: Session = Depends(database.get_db)):
+    db_prop = db.query(models.PropertyRecord).filter(models.PropertyRecord.id == id).first()
+    if not db_prop:
+        raise HTTPException(status_code=404, detail="Record not found")
+    
+    update_data = prop_update.dict(exclude_unset=True) 
+    for key, value in update_data.items():
+        setattr(db_prop, key, value)
+        
+    db.commit()
+    db.refresh(db_prop)
+    return db_prop
 
 @app.delete("/properties/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_property(id: str, db: Session = Depends(database.get_db)):
